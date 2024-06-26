@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "python-jacobi-benchmark"
+version = "0.1.0"
+description = "This Repositry provides a Benchmark, which shows which Python implementation is best suited for a specified problem size"
+authors = ["Silvan Wiedmer <silvan.wiedmer@bluewin.ch>"]
+license = "MIT Licence"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+numpy = "^2.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
