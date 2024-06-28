@@ -19,7 +19,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install poetry
         poetry install --no-root
-        poetry shell
     - name: Analysing the code with pylint
       run: |
-        pylint app
+        poetry run pylint app
