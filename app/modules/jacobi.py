@@ -3,17 +3,30 @@ Jacobi: Ax = b
 """
 
 import numpy as np
+from pydantic import BaseModel
+
+
+class JacobiSettings(BaseModel):
+    max_iterations: int = 500
+    residual: float = 10e-5
 
 
 def jacobi_component(
-    a: np.ndarray, b: np.ndarray, x_prev: np.ndarray, x_curr: np.ndarray
+    a: np.ndarray,
+    b: np.ndarray,
+    x_prev: np.ndarray,
+    x_curr: np.ndarray,
+    settings: JacobiSettings = JacobiSettings(),
 ) -> None:
-    k = 0
-    n = 3
+    iteration_count = 0
+    dimension = x_prev.shape[0]
     sub_sum = 0
-    while np.linalg.norm(np.matmul(a, x_prev) - b) > 10e-5 and k < 100:
-        for i in range(0, n):
-            for j in range(0, n):
+    while (
+        np.linalg.norm(np.matmul(a, x_prev) - b) > settings.residual
+        and iteration_count < settings.max_iterations
+    ):
+        for i in range(0, dimension):
+            for j in range(0, dimension):
                 if j == i:
                     continue
                 sub_sum += a[i][j] * x_prev[j][0]
@@ -22,9 +35,9 @@ def jacobi_component(
             sub_sum = 0
 
         x_prev = x_curr
-        k += 1
+        iteration_count += 1
 
-    print(k)
+    print(iteration_count)
 
 
 if __name__ == "__main__":
