@@ -1,7 +1,6 @@
 import numpy as np
-from pydantic import BaseModel
-
 from modules.jacobi import jacobi_component
+from pydantic import BaseModel
 
 
 class Settings(BaseModel):
