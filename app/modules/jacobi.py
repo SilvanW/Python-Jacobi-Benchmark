@@ -150,9 +150,7 @@ def jacobi_matrix_pytorch(
         previous_solution = current_solution
         iteration_count += 1
 
-    print(iteration_count)
-
-    return current_solution
+    return iteration_count, current_solution
 
 
 if __name__ == "__main__":
