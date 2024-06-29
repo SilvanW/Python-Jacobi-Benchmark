@@ -2,8 +2,8 @@
 Jacobi Solver: Ax = b
 """
 
-import torch
 import numpy as np
+import torch
 from numba import jit
 from pydantic import BaseModel
 
