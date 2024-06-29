@@ -2,6 +2,7 @@
 Jacobi Solver: Ax = b
 """
 
+import torch
 import numpy as np
 from numba import jit
 from pydantic import BaseModel
@@ -102,6 +103,56 @@ def jacobi_component_numba(
         iteration_count += 1
 
     print(iteration_count)
+
+
+def jacobi_matrix_pytorch(
+    left_side: torch.Tensor,
+    right_side: torch.Tensor,
+    previous_solution: torch.Tensor,
+    current_solution: torch.Tensor,
+    settings: JacobiSettings = JacobiSettings(),
+) -> torch.Tensor:
+    """Iterative Jacobi Solver using Matrix based approach implmented using pytorch.
+
+    Args:
+        left_side (torch.Tensor): Left Side of the Linear System of Equations (A)
+        right_side (torch.Tensor): Right Side of the Linear System of Equations (b)
+        previous_solution (torch.Tensor): Solution Vector from the Previous Iteration
+        current_solution (torch.Tensor): Solution Vector from the Current Iteration
+        settings (JacobiSettings, optional): Settings for the Solver. Defaults to JacobiSettings().
+
+    Returns:
+        torch.Tensor: Solution of the Linear System of Equations (x)
+    """
+    iteration_count = 0
+    if torch.backends.mps.is_available():
+        mps_device = torch.device("mps")
+        torch.set_default_device(mps_device)
+    else:
+        print("GPU Device not found")
+
+    print(f"Device: {torch.get_default_device()}")
+
+    diag = torch.diagflat(torch.diag(left_side))
+
+    diag_inv = torch.diagflat(1 / torch.diag(left_side))
+
+    while (
+        torch.norm(torch.matmul(left_side, previous_solution) - right_side)
+        > settings.residual
+        and iteration_count < settings.max_iterations
+    ):
+
+        current_solution = torch.matmul(
+            diag_inv, torch.matmul((diag - left_side), previous_solution)
+        ) + torch.matmul(diag_inv, right_side)
+
+        previous_solution = current_solution
+        iteration_count += 1
+
+    print(iteration_count)
+
+    return current_solution
 
 
 if __name__ == "__main__":
