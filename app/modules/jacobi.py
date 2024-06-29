@@ -57,7 +57,7 @@ def jacobi_component_numpy(
         previous_solution = current_solution
         iteration_count += 1
 
-    print(iteration_count)
+    return iteration_count
 
 
 @jit()
@@ -102,7 +102,7 @@ def jacobi_component_numba(
         previous_solution = current_solution
         iteration_count += 1
 
-    print(iteration_count)
+    return iteration_count
 
 
 def jacobi_matrix_pytorch(

@@ -2,6 +2,7 @@
 This Module provides functionality required to solve the heat equation
 """
 
+from typing import Tuple
 import numpy as np
 
 
@@ -25,6 +26,20 @@ def generate_discretization(dimension: int) -> np.ndarray:
         discretisation_matrix[i, i - 1] = -1
 
     return discretisation_matrix
+
+
+def generate_equation_system(
+    dimension: int,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    A = generate_discretization(dimension)
+    x_prev = np.zeros((dimension, 1))
+    x_curr = np.zeros((dimension, 1))
+    b = np.zeros((dimension, 1))
+
+    b[0] = 0
+    b[-1] = 1
+
+    return A, x_prev, x_curr, b
 
 
 if __name__ == "__main__":
