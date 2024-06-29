@@ -14,7 +14,7 @@ class JacobiSettings(BaseModel):
     """
 
     max_iterations: int = 500
-    residual: float = 10e-5
+    residual: float = 1e-5
 
 
 def jacobi_component_numpy(
