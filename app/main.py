@@ -58,13 +58,16 @@ if __name__ == "__main__":
     # Numpy
     ax[0].plot(x_curr_np[:, 0])
     ax[0].set_title("Numpy")
+    ax[0].grid()
 
     # Numba
     ax[1].plot(x_curr_numba[:, 0])
     ax[1].set_title("Numba")
+    ax[1].grid()
 
     # Torch
     ax[2].plot(solution[:, 0])
     ax[2].set_title("Torch")
+    ax[2].grid()
 
     plt.show()
