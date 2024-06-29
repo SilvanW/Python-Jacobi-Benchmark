@@ -1,5 +1,5 @@
 """
-Jacobi: Ax = b
+Jacobi Solver: Ax = b
 """
 
 import numpy as np
@@ -7,34 +7,52 @@ from pydantic import BaseModel
 
 
 class JacobiSettings(BaseModel):
+    """
+    Settings for the Jacobi Solver
+    """
+
     max_iterations: int = 500
     residual: float = 10e-5
 
 
-def jacobi_component(
-    a: np.ndarray,
-    b: np.ndarray,
-    x_prev: np.ndarray,
-    x_curr: np.ndarray,
+def jacobi_component_numpy(
+    left_side: np.ndarray,
+    right_side: np.ndarray,
+    previous_solution: np.ndarray,
+    current_solution: np.ndarray,
     settings: JacobiSettings = JacobiSettings(),
 ) -> None:
+    """
+    Iterative Jacobi Solver using Component based approach implmented using numpy.
+    All Arrays must be passed by reference.
+
+    Args:
+        left_side (np.ndarray): Left Side of the Linear System of Equations (A)
+        right_side (np.ndarray): Right Side of the Linear System of Equations (b)
+        previous_solution (np.ndarray): Solution Vector from the Previous Iteration
+        current_solution (np.ndarray): Solution Vector from the Current Iteration
+        settings (JacobiSettings, optional): Settings for the Solver. Defaults to JacobiSettings().
+    """
     iteration_count = 0
-    dimension = x_prev.shape[0]
+    dimension = previous_solution.shape[0]
     sub_sum = 0
     while (
-        np.linalg.norm(np.matmul(a, x_prev) - b) > settings.residual
+        np.linalg.norm(np.matmul(left_side, previous_solution) - right_side)
+        > settings.residual
         and iteration_count < settings.max_iterations
     ):
         for i in range(0, dimension):
             for j in range(0, dimension):
                 if j == i:
                     continue
-                sub_sum += a[i][j] * x_prev[j][0]
+                sub_sum += left_side[i][j] * previous_solution[j][0]
 
-            x_curr[i][0] = (1 / a[i][i]) * (b[i][0] - sub_sum)
+            current_solution[i][0] = (1 / left_side[i][i]) * (
+                right_side[i][0] - sub_sum
+            )
             sub_sum = 0
 
-        x_prev = x_curr
+        previous_solution = current_solution
         iteration_count += 1
 
     print(iteration_count)
@@ -56,7 +74,7 @@ if __name__ == "__main__":
 
     print(np.linalg.norm(np.matmul(A, x_curr) - b))
 
-    jacobi_component(A, b, x_prev, x_curr)
+    jacobi_component_numpy(A, b, x_prev, x_curr)
 
     print(np.linalg.norm(np.matmul(A, x_curr) - b))
 
