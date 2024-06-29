@@ -51,8 +51,8 @@ def generate_equation_system_np(
     x_curr = np.zeros((dimension, 1))
     b = np.zeros((dimension, 1))
 
-    b[0] = 0
-    b[-1] = 1
+    b[0] = 0.0
+    b[-1] = 1.0
 
     return A, x_prev, x_curr, b
 
@@ -65,8 +65,8 @@ def generate_equation_system_torch(
     x_curr = torch.zeros((dimension, 1))
     b = torch.zeros((dimension, 1))
 
-    b[0] = 0
-    b[-1] = 1
+    b[0] = 0.0
+    b[-1] = 1.0
 
     return A, x_prev, x_curr, b
 
