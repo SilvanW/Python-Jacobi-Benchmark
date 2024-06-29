@@ -3,6 +3,7 @@ Jacobi Solver: Ax = b
 """
 
 import numpy as np
+from numba import jit
 from pydantic import BaseModel
 
 
@@ -40,6 +41,51 @@ def jacobi_component_numpy(
         np.linalg.norm(np.matmul(left_side, previous_solution) - right_side)
         > settings.residual
         and iteration_count < settings.max_iterations
+    ):
+        for i in range(0, dimension):
+            for j in range(0, dimension):
+                if j == i:
+                    continue
+                sub_sum += left_side[i][j] * previous_solution[j][0]
+
+            current_solution[i][0] = (1 / left_side[i][i]) * (
+                right_side[i][0] - sub_sum
+            )
+            sub_sum = 0
+
+        previous_solution = current_solution
+        iteration_count += 1
+
+    print(iteration_count)
+
+
+@jit()
+def jacobi_component_numba(
+    left_side: np.ndarray,
+    right_side: np.ndarray,
+    previous_solution: np.ndarray,
+    current_solution: np.ndarray,
+    max_iterations: int,
+    residual: float,
+) -> None:
+    """
+    Iterative Jacobi Solver using Component based approach implmented using numpy.
+    All Arrays must be passed by reference.
+
+    Args:
+        left_side (np.ndarray): Left Side of the Linear System of Equations (A)
+        right_side (np.ndarray): Right Side of the Linear System of Equations (b)
+        previous_solution (np.ndarray): Solution Vector from the Previous Iteration
+        current_solution (np.ndarray): Solution Vector from the Current Iteration
+        max_iterations (int): Max iteration before stop
+        residual (float): Accepted Residual
+    """
+    iteration_count = 0
+    dimension = previous_solution.shape[0]
+    sub_sum = 0
+    while (
+        np.linalg.norm((left_side @ previous_solution) - right_side) > residual
+        and iteration_count < max_iterations
     ):
         for i in range(0, dimension):
             for j in range(0, dimension):
